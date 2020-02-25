@@ -87,6 +87,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7039E58C240583040053E320 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B400B120225BCEF9008B7125 /* MapVC.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		7039E58D240583130053E320 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B400B151225BCFFC008B7125 /* SearchTableViewCell.swift */,
+				B400B122225BCEF9008B7125 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7039E58E2405831B0053E320 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B400B157225BD03E008B7125 /* SearchStructure.swift */,
+				B400B155225BD021008B7125 /* DataSource.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		B400B112225BCEF9008B7125 = {
 			isa = PBXGroup;
 			children = (
@@ -111,8 +137,10 @@
 		B400B11D225BCEF9008B7125 /* NaviBonny */ = {
 			isa = PBXGroup;
 			children = (
+				7039E58E2405831B0053E320 /* Model */,
+				7039E58D240583130053E320 /* View */,
+				7039E58C240583040053E320 /* Controller */,
 				B400B150225BCFD7008B7125 /* Utilities */,
-				B400B14F225BCFC2008B7125 /* View Controller */,
 				B400B11E225BCEF9008B7125 /* AppDelegate.swift */,
 				B400B128225BCEFF008B7125 /* Assets.xcassets */,
 				B400B12A225BCEFF008B7125 /* LaunchScreen.storyboard */,
@@ -140,22 +168,10 @@
 			path = NaviBonnyUITests;
 			sourceTree = "<group>";
 		};
-		B400B14F225BCFC2008B7125 /* View Controller */ = {
-			isa = PBXGroup;
-			children = (
-				B400B120225BCEF9008B7125 /* MapVC.swift */,
-				B400B122225BCEF9008B7125 /* Main.storyboard */,
-			);
-			path = "View Controller";
-			sourceTree = "<group>";
-		};
 		B400B150225BCFD7008B7125 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				B400B151225BCFFC008B7125 /* SearchTableViewCell.swift */,
 				B400B153225BD00E008B7125 /* Identifier.swift */,
-				B400B155225BD021008B7125 /* DataSource.swift */,
-				B400B157225BD03E008B7125 /* SearchStructure.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";

@@ -15,6 +15,9 @@ protocol HandleMapSearch: class {
 }
 
 class MapVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
+    
+    
     func dropPinZoomIn(placemark: MKPlacemark) {
         guard let coordinate = locationManager.location?.coordinate else {return}
         let coordinateRegion = MKCoordinateRegion(center: coordinate, latitudinalMeters: regionRadius * 1.0, longitudinalMeters: regionRadius * 1.0)
@@ -63,7 +66,6 @@ class MapVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
 
     func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
     }
     
