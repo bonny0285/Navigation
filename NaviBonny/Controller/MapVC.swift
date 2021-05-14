@@ -18,58 +18,68 @@ class MapVC: UIViewController {
     
     //MARK: - Outlets
     
-    @IBOutlet weak var pullUpStuckView: NSLayoutConstraint!
     @IBOutlet weak var searchBox: UITextField!
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var tableViewSearch: UITableView!
+    @IBOutlet weak var tableView: UITableView!
     
     //MARK: - Properties
     
     var locationManager = CLLocationManager()
     let authorizationStatus = CLLocationManager.authorizationStatus()
     let regionRadius: Double = 1000
-    var matchingItems:[MKMapItem] = []
-    var selectedPin:MKPlacemark? = nil
-    var newAddress : MKPlacemark? = nil
+    var matchingItems: [MKMapItem] = []
+    var selectedPin: MKPlacemark? = nil
+    var newAddress: MKPlacemark? = nil
+    
+    var keyboardWillShow: NSNotification!
+    var keyboardWillHide: NSNotification!
     
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableViewSearch.delegate = self
-        tableViewSearch.dataSource = self
+        
+        mapView.isUserInteractionEnabled = true
+        mapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(mapTouched(_:))))
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        setupAllDelegateAndLocations()
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if view.frame.origin.y == 0 {
+                self.view.frame.origin.y -= keyboardSize.height
+            }
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
+    //MARK: - Methods
+    
+    private func setupAllDelegateAndLocations() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableFooterView = UIView()
+        tableView.isHidden = true
         mapView.delegate = self
         locationManager.delegate = self
+        
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         configureLocationServices()
         centerMapOnUserLocation()
-        
-        //locationSearchTable.handleMapSearchDelegate = self
-    }
-    
-    //MARK: - Methods
-    
-    //    func dropPinZoomIn(placemark: MKPlacemark) {
-    //        guard let coordinate = locationManager.location?.coordinate else {return}
-    //        let coordinateRegion = MKCoordinateRegion(center: coordinate, latitudinalMeters: regionRadius * 1.0, longitudinalMeters: regionRadius * 1.0)
-    //        mapView.setRegion(coordinateRegion, animated: true)
-    //    }
-    
-//    private func getDirections() {
-//        guard let selectedPin = selectedPin else { return }
-//        let mapItem = MKMapItem(placemark: selectedPin)
-//        let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-//        mapItem.openInMaps(launchOptions: launchOptions)
-//    }
-    
-    private func dismissKeyboard() {
-        view.endEditing(true)
     }
     
     private func parseAddress(selectedItem: MKPlacemark) -> String {
-
+        
         // put a space between "4" and "Melrose Place"
         let firstSpace = (selectedItem.subThoroughfare != nil && selectedItem.thoroughfare != nil) ? " " : ""
         
@@ -97,29 +107,15 @@ class MapVC: UIViewController {
         return addressLine
     }
     
-    private func setStuckView() {
-        if pullUpStuckView.constant == 60 {
-            pullUP()
-        } else {
-            pullDown()
-        }
+    private func startSearching() {
+        tableView.isHidden = false
     }
     
-    private func pullUP() {
-        pullUpStuckView.constant = 900
-        
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    private func pullDown() {
-        pullUpStuckView.constant = 60
+    private func endSearching() {
+        tableView.isHidden = true
         searchBox.text = ""
-        
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
+        matchingItems.removeAll()
+        tableView.reloadData()
     }
     
     private func getAddress(){
@@ -135,51 +131,40 @@ class MapVC: UIViewController {
         request.region = mapView.region
         let search = MKLocalSearch(request: request)
         
-        search.start { response, _ in
+        search.start { response, error in
             
-            guard let response = response else { return }
-            
-            self.matchingItems = response.mapItems
-            print(self.matchingItems)
-            self.tableViewSearch.reloadData()
+            if let error = error {
+                print(error.localizedDescription)
+                
+            } else if let response = response {
+                self.matchingItems = response.mapItems
+                self.tableView.reloadData()
+            }
         }
     }
     
     //MARK: - Actions
     
+    @objc private func mapTouched(_ sednder: UITapGestureRecognizer) {
+        view.endEditing(true)
+        tableView.isHidden = true
+    }
+    
     @IBAction func upBox(_ sender: UITextField) {
-        
-        guard pullUpStuckView.constant < 396 else { return }
-        
-        pullUP()
-        dismissKeyboard()
+        // dismissKeyboard()
+        view.endEditing(true)
     }
     
     @IBAction func searchTextBoxEditChange(_ sender: UITextField) {
-        pullUP()
+        startSearching()
         
         if sender.text == "" {
-            pullDown()
-            dism()
-            dismissKeyboard()
+            endSearching()
+            view.endEditing(true)
+            //dismissKeyboard()
         }
         
         updateSearchResults()
-        dism()
-    }
-    
-    func dism () {
-        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            return matchingItems.count
-        }
-        
-        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: SEARCH_CELL) as? SearchTableViewCell
-            let selectedItem = matchingItems[indexPath.row].placemark
-            cell?.textLabel?.text = " "
-            cell?.detailTextLabel?.text = " "
-            return cell!
-        }
     }
 }
 
@@ -194,8 +179,8 @@ extension MapVC: UITableViewDelegate, UITableViewDataSource {
         let address = matchingItems[indexPath.row].placemark
         newAddress = address
         getAddress()
-
-        dismiss(animated: true, completion: nil)
+        
+        ///dismiss(animated: true, completion: nil)
         mapView.removeAnnotations(mapView.annotations)
         let annotation = MKPointAnnotation()
         annotation.coordinate = address.coordinate
@@ -209,8 +194,9 @@ extension MapVC: UITableViewDelegate, UITableViewDataSource {
         let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         let region = MKCoordinateRegion(center: address.coordinate, span: span)
         mapView.setRegion(region, animated: true)
-        dismissKeyboard()
-        pullDown()
+        //dismissKeyboard()
+        
+        endSearching()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -221,7 +207,7 @@ extension MapVC: UITableViewDelegate, UITableViewDataSource {
         let selectedItem = matchingItems[indexPath.row].placemark
         cell.textLabel?.text = selectedItem.name
         cell.detailTextLabel?.text = parseAddress(selectedItem: selectedItem)
-
+        
         return cell
     }
 }
@@ -295,12 +281,11 @@ extension MapVC: MKMapViewDelegate {
         
         let coordinates = CLLocationCoordinate2DMake(lati, long)
         let regionSpan = MKCoordinateRegion(center: coordinates, latitudinalMeters: regionDistance, longitudinalMeters: regionDistance)
-       
+        
         let options = [
             MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: regionSpan.center),
             MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: regionSpan.span)
         ]
-        
         
         let placemark = MKPlacemark(coordinate: coordinates, addressDictionary: nil)
         let mapItem = MKMapItem(placemark: placemark)
