@@ -20,6 +20,7 @@
 		B400B156225BD021008B7125 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B400B155225BD021008B7125 /* DataSource.swift */; };
 		B400B158225BD03E008B7125 /* SearchStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = B400B157225BD03E008B7125 /* SearchStructure.swift */; };
 		B4081A2E225D236C00032449 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4081A2D225D236C00032449 /* MapKit.framework */; };
+		B4A603B626A9C38B0029ED4B /* LocationManagerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A603B526A9C38B0029ED4B /* LocationManagerViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		B400B155225BD021008B7125 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		B400B157225BD03E008B7125 /* SearchStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchStructure.swift; sourceTree = "<group>"; };
 		B4081A2D225D236C00032449 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		B4A603B526A9C38B0029ED4B /* LocationManagerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 		B400B11D225BCEF9008B7125 /* NaviBonny */ = {
 			isa = PBXGroup;
 			children = (
+				B4A603B426A9BEFB0029ED4B /* ViewModel */,
 				7039E58E2405831B0053E320 /* Model */,
 				7039E58D240583130053E320 /* View */,
 				7039E58C240583040053E320 /* Controller */,
@@ -182,6 +185,14 @@
 				B4081A2D225D236C00032449 /* MapKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B4A603B426A9BEFB0029ED4B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				B4A603B526A9C38B0029ED4B /* LocationManagerViewModel.swift */,
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -321,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B400B156225BD021008B7125 /* DataSource.swift in Sources */,
+				B4A603B626A9C38B0029ED4B /* LocationManagerViewModel.swift in Sources */,
 				B400B121225BCEF9008B7125 /* MapVC.swift in Sources */,
 				B400B158225BD03E008B7125 /* SearchStructure.swift in Sources */,
 				B400B154225BD00E008B7125 /* Identifier.swift in Sources */,
